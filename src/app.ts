@@ -6,6 +6,20 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 
+// "scripts": {
+//   "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
+//   "build": "tsc",
+//   "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts"
+// },
+
+// let scripts = {
+//   start: "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
+//   build: "rimraf dist && tsc",
+//   "ts.check": "tsc --project tsconfig.json",
+//   "add-build": "git add dist",
+//   test: 'echo "Error: no test specified" && exit 1',
+// };
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
