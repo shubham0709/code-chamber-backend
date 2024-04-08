@@ -10,6 +10,7 @@ const snippetController_1 = require("./controllers/snippetController");
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
+const snippet_1 = require("./models/snippet");
 // "scripts": {
 //   "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
 //   "build": "tsc",
@@ -49,20 +50,23 @@ io.on("connection", (socket) => {
     });
     // Broadcast changes to all users in the same snippet room, except the one who made the change
     //edit content of the snippet
-    socket.on("editContent", ({ token, snippetId, content }) => {
+    socket.on("editContent", async ({ token, snippetId, content }) => {
         console.log("changing content");
         socket.to(snippetId).emit("contentChanged", { snippetId, content });
+        await snippet_1.snippetModel.findOneAndUpdate({ _id: snippetId }, { content: content }, { new: true });
     });
     //Making different callers for title, content, and discription
     //edit title of the snippet
-    socket.on("editTitle", ({ token, snippetId, title }) => {
+    socket.on("editTitle", async ({ token, snippetId, title }) => {
         console.log("changing title");
         socket.to(snippetId).emit("titleChanged", { snippetId, title });
+        await snippet_1.snippetModel.findOneAndUpdate({ _id: snippetId }, { title });
     });
     //edit settings of the snippet ({language})
-    socket.on("editSettings", ({ token, snippetId, settings }) => {
-        console.log("changing settings");
+    socket.on("editSettings", async ({ token, snippetId, settings }) => {
+        console.log("changing settings : ", { token, snippetId, settings });
         socket.to(snippetId).emit("settingsChanged", { snippetId, settings });
+        await snippet_1.snippetModel.findOneAndUpdate({ _id: snippetId }, { settings });
     });
     // Handle disconnection
     socket.on("disconnect", () => {
