@@ -11,7 +11,6 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"],
   },
 });
 
@@ -48,16 +47,22 @@ io.on("connection", (socket) => {
   });
 
   // Broadcast changes to all users in the same snippet room, except the one who made the change
+
+  //edit content of the snippet
   socket.on("editContent", ({ token, snippetId, content }) => {
     console.log("changing content");
     socket.to(snippetId).emit("contentChanged", { snippetId, content });
   });
 
+  //Making different callers for title, content, and discription
+
+  //edit title of the snippet
   socket.on("editTitle", ({ token, snippetId, title }) => {
     console.log("changing title");
     socket.to(snippetId).emit("titleChanged", { snippetId, title });
   });
 
+  //edit settings of the snippet ({language})
   socket.on("editSettings", ({ token, snippetId, settings }) => {
     console.log("changing settings");
     socket.to(snippetId).emit("settingsChanged", { snippetId, settings });
