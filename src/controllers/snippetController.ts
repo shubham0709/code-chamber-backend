@@ -5,9 +5,16 @@ import { snippetModel, snippetStructure } from "../models/snippet";
 const snippetController = express.Router();
 
 //get all the public snippets
-snippetController.get("/all", async (req, res) => {
-  const publicSnippets = await snippetModel.find().sort({ "metaData.createdAt": -1 });
-  return res.status(200).json(publicSnippets);
+snippetController.get("/my-snippets", authMiddleware, async (req, res) => {
+  try {
+    const { firstName, lastName, email, _id } = req.user;
+    const publicSnippets = await snippetModel
+      .find({ "metaData.createdBy._id": _id })
+      .sort({ "metaData.createdAt": -1 });
+    return res.status(200).json(publicSnippets);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 //upload or save a snippet

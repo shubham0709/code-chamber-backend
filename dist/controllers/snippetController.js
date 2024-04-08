@@ -10,9 +10,17 @@ const snippet_1 = require("../models/snippet");
 const snippetController = express_1.default.Router();
 exports.snippetController = snippetController;
 //get all the public snippets
-snippetController.get("/all", async (req, res) => {
-    const publicSnippets = await snippet_1.snippetModel.find().sort({ "metaData.createdAt": -1 });
-    return res.status(200).json(publicSnippets);
+snippetController.get("/my-snippets", authMiddleware_1.authMiddleware, async (req, res) => {
+    try {
+        const { firstName, lastName, email, _id } = req.user;
+        const publicSnippets = await snippet_1.snippetModel
+            .find({ "metaData.createdBy._id": _id })
+            .sort({ "metaData.createdAt": -1 });
+        return res.status(200).json(publicSnippets);
+    }
+    catch (err) {
+        res.status(500).send(err);
+    }
 });
 //upload or save a snippet
 snippetController.post("/", authMiddleware_1.authMiddleware, async (req, res) => {
