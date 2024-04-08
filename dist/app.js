@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.server = void 0;
 const express_1 = __importDefault(require("express"));
 const db_1 = require("./config/db");
 const authController_1 = require("./controllers/authController");
@@ -12,10 +13,10 @@ const http_1 = __importDefault(require("http"));
 const socket_io_1 = require("socket.io");
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
+exports.server = server;
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: "*",
-        methods: ["GET", "POST"],
     },
 });
 app.use((0, cors_1.default)());
@@ -37,14 +38,18 @@ io.on("connection", (socket) => {
         console.log(`A user left room for snippet: ${snippetId}`);
     });
     // Broadcast changes to all users in the same snippet room, except the one who made the change
+    //edit content of the snippet
     socket.on("editContent", ({ token, snippetId, content }) => {
         console.log("changing content");
         socket.to(snippetId).emit("contentChanged", { snippetId, content });
     });
+    //Making different callers for title, content, and discription
+    //edit title of the snippet
     socket.on("editTitle", ({ token, snippetId, title }) => {
         console.log("changing title");
         socket.to(snippetId).emit("titleChanged", { snippetId, title });
     });
+    //edit settings of the snippet ({language})
     socket.on("editSettings", ({ token, snippetId, settings }) => {
         console.log("changing settings");
         socket.to(snippetId).emit("settingsChanged", { snippetId, settings });
