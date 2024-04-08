@@ -13,22 +13,17 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "";
 const authController = express.Router();
 
 authController.post("/login", async (req: Request, res: Response) => {
-  // const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
-
   const verifySchema = userLoginStructure.safeParse({
     email,
     password,
   });
-
   if (!verifySchema.success) {
     res.status(400).json(verifySchema);
     return;
   }
-
   const userExists = await UserModel.findOne({ email: email });
-
   if (userExists) {
     const passwordCheck = await bcrypt.compare(password, userExists.password);
     if (passwordCheck) {
