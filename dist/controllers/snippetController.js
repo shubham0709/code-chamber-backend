@@ -7,6 +7,7 @@ exports.snippetController = void 0;
 const express_1 = __importDefault(require("express"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const snippet_1 = require("../models/snippet");
+const dateUtils_1 = require("../utils/dateUtils");
 const snippetController = express_1.default.Router();
 exports.snippetController = snippetController;
 //get all the public snippets
@@ -41,14 +42,14 @@ snippetController.post("/", authMiddleware_1.authMiddleware, async (req, res) =>
                     email: email,
                     _id: _id,
                 },
-                createdAt: new Date().toUTCString(),
+                createdAt: (0, dateUtils_1.getCurrentTimeInUTC)(),
                 lastUpdatedBy: {
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
                     _id: _id,
                 },
-                lastUpdatedAt: new Date().toUTCString(),
+                lastUpdatedAt: (0, dateUtils_1.getCurrentTimeInUTC)(),
             },
         };
         const verifySnippetStructure = snippet_1.snippetStructure.safeParse(rawSnippet);

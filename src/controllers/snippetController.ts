@@ -1,6 +1,7 @@
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { snippetModel, snippetStructure } from "../models/snippet";
+import { getCurrentTimeInUTC } from "../utils/dateUtils";
 
 const snippetController = express.Router();
 
@@ -36,14 +37,14 @@ snippetController.post("/", authMiddleware, async (req, res) => {
           email: email,
           _id: _id,
         },
-        createdAt: new Date().toUTCString(),
+        createdAt: getCurrentTimeInUTC(),
         lastUpdatedBy: {
           firstName: firstName,
           lastName: lastName,
           email: email,
           _id: _id,
         },
-        lastUpdatedAt: new Date().toUTCString(),
+        lastUpdatedAt: getCurrentTimeInUTC(),
       },
     };
 
