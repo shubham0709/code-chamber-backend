@@ -60,12 +60,12 @@ authController.post("/signup", async (req, res) => {
             password,
         });
         if (!verifySchema.success) {
-            res.status(400).json(verifySchema);
+            res.status(400).send(verifySchema.error.issues.map((el) => el.message).join(" , "));
             return;
         }
         const userExists = await user_1.UserModel.findOne({ email });
         if (userExists) {
-            return res.status(400).send({ message: "User already exists" });
+            return res.status(400).send("User already exists");
         }
         const hashedPassword = await bcrypt_1.default.hash(password, SALT_ROUNDS);
         const newUser = new user_1.UserModel({
