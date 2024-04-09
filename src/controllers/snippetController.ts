@@ -80,21 +80,26 @@ snippetController.get("/:id", authMiddleware, async (req, res) => {
 snippetController.put("/:id", authMiddleware, async (req, res) => {});
 
 //delete snippet by id
-snippetController.delete("/:id", async (req, res) => {
+snippetController.delete("/:id", authMiddleware, async (req, res) => {
   const snippetId = req.params.id;
-  if (snippetId == undefined) {
+  if (!snippetId) {
     return res.status(404).send("Not Found");
   }
   const { firstName, lastName, email, _id } = req.user;
   const foundSnippet = await snippetModel.findOne({ _id: snippetId });
+
   if (!foundSnippet) {
-    return res.status(404).send({ message: "Not Found" });
+    return res.status(404).send("Not found");
   }
-  if (foundSnippet?.metaData?.createdBy?._id == _id) {
+
+  console.log(foundSnippet.metaData?.createdBy?._id, req.user._id);
+
+  if (foundSnippet?.metaData?.createdBy?._id?.toString() === _id) {
     const deleteSnippet = await snippetModel.findOneAndDelete({ _id: snippetId });
     return res.status(200).send(deleteSnippet);
+  } else {
+    return res.status(403).send("You are not authorized to delete this snippet");
   }
-  return res.status(404).send({ message: "Not Found" });
 });
 
 //request to get edit access of a snippet by id

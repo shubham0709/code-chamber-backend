@@ -42,7 +42,7 @@ authController.post("/login", async (req: Request, res: Response) => {
       });
     }
   }
-  return res.status(403).json({ message: "Invalid credentials" });
+  return res.status(403).send("Invalid credentials");
 });
 
 authController.post("/signup", async (req: Request, res: Response) => {
